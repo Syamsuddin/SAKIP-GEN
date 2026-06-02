@@ -1,13 +1,13 @@
 # SAKIP-Gen
 
-> Agen AI **evaluator + drafter** SAKIP untuk pemerintah daerah — berjalan berdampingan dengan aplikasi web eSAKIP dan MySQL Anda, diakses lewat **bot Telegram** (perintah `/slash` **dan bahasa alami**) serta **Telegram Mini App**.
+> Agen AI **evaluator + drafter** SAKIP untuk pemerintah daerah — berjalan berdampingan dengan aplikasi web eSAKIP dan MySQL Anda, diakses lewat **bot Telegram** (perintah `/slash` **dan bahasa alami**) dan **Mini App** (webview).
 
 ![status](https://img.shields.io/badge/status-production--ready-success)
 ![version](https://img.shields.io/badge/version-1.0-blue)
 ![python](https://img.shields.io/badge/python-3.11%2B-blue)
 ![tests](https://img.shields.io/badge/tests-101%20passed-success)
 ![framework](https://img.shields.io/badge/FastAPI%20%2B%20aiogram%20v3-009688)
-![license](https://img.shields.io/badge/license-internal-lightgrey)
+![license](https://img.shields.io/badge/license-MIT-green)
 
 SAKIP-Gen menilai akuntabilitas kinerja instansi (mengacu **PermenPAN-RB 88/2021**), menelusuri
 seluruh siklus SAKIP (perencanaan → pengukuran → pelaporan → evaluasi → tindak lanjut), menemukan
@@ -344,5 +344,4 @@ smoke test.
 4. Untuk perubahan skema/keamanan/perintah, perbarui dokumen terkait di `docs/`.
 
 ## Lisensi
-Proyek internal; belum disertakan berkas `LICENSE`. Tambahkan lisensi sesuai kebijakan instansi
-Anda (mis. *proprietary*/penggunaan internal pemerintah daerah) sebelum distribusi.
+Proyek ini dirilis di bawah lisensi **MIT**. Lihat berkas [`LICENSE`](LICENSE) untuk detail lengkap.
