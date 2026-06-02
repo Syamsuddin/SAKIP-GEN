@@ -1,16 +1,92 @@
+# Environment & Secrets
 .env
+.env.local
+.env.*.local
+
+# Python & virtual environments
 .venv/
+venv/
+env/
+ENV/
+.Python
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
+*.so
+*.egg
 *.egg-info/
 dist/
 build/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Testing & coverage
 .coverage
+.coverage.*
 .pytest_cache/
-.mypy_cache/
+.hypothesis/
 htmlcov/
+.tox/
+.nox/
+
+# Type checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# Claude Code / AI Development (do not commit)
+CLAUDE.md
 .claude/
+.swarm/
+.swarm/*/
+memory/
+**/memory/
+*.json-shm
+*.json-wal
+.claude-context
+.claude-plan
+.claude-memory
+
+# Database & SQLite (local dev only)
 *.db
+*.db-shm
+*.db-wal
 *.sqlite
+*.sqlite3
+local_*.db*
+
+# OS & temporary files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.AppleDouble
+.LSOverride
+*.tmp
+*.bak
+*.swp
+
+# Node (if frontend gets added)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Docker volumes
+db_data/
+redis_data/
