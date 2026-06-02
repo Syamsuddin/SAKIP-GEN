@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Tinjau Usulan — SAKIP-Gen</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root { color-scheme: light dark; }
+    body { font-family: -apple-system, system-ui, "Segoe UI", Roboto, sans-serif;
+           margin: 0; padding: 16px; background: var(--tg-theme-bg-color, #fff);
+           color: var(--tg-theme-text-color, #111); }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .muted { color: var(--tg-theme-hint-color, #777); font-size: 13px; margin: 0 0 16px; }
+    .card { background: var(--tg-theme-secondary-bg-color, #f4f4f5);
+            border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+    .field-name { font-weight: 600; font-size: 12px; text-transform: uppercase;
+                  letter-spacing: .04em; color: var(--tg-theme-hint-color, #777); }
+    .lama { text-decoration: line-through; opacity: .7; margin: 6px 0; }
+    label { display: block; font-size: 13px; margin: 10px 0 4px; }
+    input, textarea { width: 100%; box-sizing: border-box; padding: 10px;
+          border: 1px solid var(--tg-theme-hint-color, #ccc); border-radius: 8px;
+          background: var(--tg-theme-bg-color, #fff); color: var(--tg-theme-text-color, #111);
+          font-size: 15px; }
+    textarea { min-height: 84px; resize: vertical; }
+    .est { font-size: 13px; color: var(--tg-theme-link-color, #2481cc); margin-top: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Tinjau Usulan Perbaikan</h1>
+  <p class="muted">{{ u.instansi }} &middot; Tahun {{ u.tahun }} &middot; Indikator <b>{{ u.indikator_id }}</b></p>
+
+  <div id="perubahan">
+  {% for p in u.perubahan %}
+    <div class="card" data-field="{{ p.field }}" data-lama="{{ p.lama|e }}">
+      <div class="field-name">{{ p.field }}</div>
+      {% if p.lama %}<div class="lama">{{ p.lama }}</div>{% endif %}
+      <input class="usulan-input" value="{{ p.usulan|e }}" />
+    </div>
+  {% endfor %}
+  </div>
+
+  <label for="alasan">Alasan / catatan peninjau</label>
+  <textarea id="alasan">{{ u.alasan }}</textarea>
+
+  <p class="est">Estimasi kenaikan indeks (proses): +{{ u.estimasi_poin }} ({{ u.gap_lke }})</p>
+  <p class="muted">Estimasi internal SAKIP-Gen pada komponen proses — bukan hasil LKE/Nilai AKIP resmi MenPAN-RB.</p>
+
+  <script>
+    const tg = window.Telegram ? window.Telegram.WebApp : null;
+    const TOKEN = {{ token|tojson }};
+    const HASH_LAMA = {{ u.hash_data_lama|tojson }};
+
+    function kumpulkan() {
+      const perubahan = [];
+      document.querySelectorAll('#perubahan .card').forEach(function (c) {
+        perubahan.push({
+          field: c.getAttribute('data-field'),
+          lama: c.getAttribute('data-lama'),
+          usulan: c.querySelector('.usulan-input').value
+        });
+      });
+      return { perubahan: perubahan, alasan: document.getElementById('alasan').value, hash_data_lama: HASH_LAMA };
+    }
+
+    function beritahu(pesan, sukses) {
+      if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred(sukses ? 'success' : 'error');
+      if (tg && tg.showAlert) tg.showAlert(pesan, function () { if (sukses) tg.close(); });
+      else alert(pesan);
+    }
+
+    async function kirim() {
+      if (!tg) { alert('Buka halaman ini dari dalam Telegram.'); return; }
+      const body = { initData: tg.initData, token: TOKEN, data: kumpulkan() };
+      try {
+        const r = await fetch('/api/usulan/simpan', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        if (r.ok) {
+          beritahu('Usulan disimpan ke staging untuk promosi.', true);
+        } else {
+          const e = await r.json().catch(function () { return {}; });
+          beritahu('Gagal: ' + (e.detail || r.status), false);
+        }
+      } catch (err) {
+        beritahu('Kesalahan jaringan: ' + err, false);
+      }
+    }
+
+    if (tg) {
+      tg.ready(); tg.expand(); tg.enableClosingConfirmation();
+      tg.MainButton.setText('Simpan ke usulan');
+      tg.MainButton.show();
+      tg.MainButton.onClick(function () {
+        tg.showConfirm('Setujui usulan ini dan simpan ke staging?', function (ok) { if (ok) kirim(); });
+      });
+    }
+  </script>
+</body>
+</html>

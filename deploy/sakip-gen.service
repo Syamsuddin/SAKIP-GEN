@@ -1,0 +1,38 @@
+[Unit]
+Description=SAKIP-Gen (FastAPI + aiogram) — agen evaluator/drafter SAKIP
+After=network-online.target mysql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=sakipgen
+Group=sakipgen
+WorkingDirectory=/opt/sakip-gen
+EnvironmentFile=/opt/sakip-gen/.env
+ExecStart=/opt/sakip-gen/.venv/bin/gunicorn app:app -c /opt/sakip-gen/deploy/gunicorn.conf.py
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=always
+RestartSec=3
+TimeoutStopSec=30
+
+# Logging -> journald
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=sakip-gen
+
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ProtectControlGroups=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+RestrictSUIDSGID=true
+LockPersonality=true
+ReadWritePaths=/opt/sakip-gen
+CapabilityBoundingSet=
+AmbientCapabilities=
+
+[Install]
+WantedBy=multi-user.target

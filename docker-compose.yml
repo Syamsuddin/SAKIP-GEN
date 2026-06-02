@@ -1,0 +1,15 @@
+services:
+  sakip-gen:
+    build: .
+    image: sakip-gen:1.1.0
+    container_name: sakip-gen
+    env_file: .env
+    environment:
+      - BIND=0.0.0.0:8000
+    ports:
+      - "127.0.0.1:8000:8000"   # hanya localhost; TLS diterminasi Nginx host
+    restart: unless-stopped
+
+# Catatan: MySQL diasumsikan EKSTERNAL (host/aplikasi SAKIP yang ada).
+# Arahkan DB_*_URL ke host (mis. host.docker.internal atau IP host).
+# Untuk MySQL dalam compose, tambahkan service 'db' lalu pakai host 'db' pada DB_*_URL.

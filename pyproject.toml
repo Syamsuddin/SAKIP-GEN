@@ -1,0 +1,30 @@
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+extend-exclude = [".venv", "alembic"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = [
+  "E501",   # panjang baris ditangani formatter
+  "B008",   # pemanggilan dalam argumen default (pola FastAPI Depends/Header)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E402", "B018"]
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
+warn_unused_ignores = false
+disallow_untyped_defs = false
+
+[tool.coverage.run]
+# Fokus pada kode pustaka; kecualikan uji, migrasi, skrip entrypoint/deploy.
+omit = [
+  "tests/*", "alembic/*", "deploy/*",
+  "dev_polling.py", "demo_evaluasi.py", ".venv/*",
+]
+
+[tool.coverage.report]
+exclude_also = ["if __name__ == .__main__.:", "raise NotImplementedError"]

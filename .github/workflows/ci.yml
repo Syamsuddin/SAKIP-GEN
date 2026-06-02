@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install dependencies (tanpa asyncmy — tak diperlukan uji)
+        run: |
+          python -m pip install --upgrade pip
+          grep -v '^asyncmy' requirements.txt > /tmp/reqs.txt
+          pip install -r /tmp/reqs.txt -r requirements-dev.txt
+
+      - name: Ruff (lint)
+        run: ruff check .
+
+      - name: Mypy (informational — toleransi pola pra-ada)
+        run: mypy . || true
+
+      - name: Pytest + coverage gate
+        run: pytest -q --cov=. --cov-report=term-missing --cov-fail-under=65
+
+      - name: Alembic upgrade head (verifikasi migrasi ai_* di SQLite)
+        run: ALEMBIC_DB_URL="sqlite+aiosqlite:///./_ci.db" alembic upgrade head
